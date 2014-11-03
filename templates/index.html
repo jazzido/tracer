@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset=utf-8 />
+    <title></title>
+    <!-- link rel="stylesheet" type="text/css" media="screen" href="css/master.css" / -->
+    <link rel="stylesheet" type="text/css" media="screen" href="http://necolas.github.io/normalize.css/3.0.2/normalize.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://malsup.github.com/jquery.form.js"></script>
+    <script src="https://fgnass.github.io/spin.js/spin.min.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1julwXJMaKGFC6dqdseQFGziEcvKtPj8"></script>
+    <!--[if IE]>
+        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+    <style type="text/css">
+      #container {
+      width: 80%;
+      margin: 0 auto;
+      }
+      p {
+
+      }
+      p label {
+        width: 15%;
+        display: inline-block;
+      }
+      #download-link {
+        font-size: 20px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <h1>Tracer</h1>
+      <form method="post" action="{{url_for('upload_kml')}}" enctype="multipart/form-data">
+        <p>
+        <label for="file">Choose CSV File</label>
+        <input type="file" name="file" id="file" accept=".csv">
+        </p>
+        <p>
+        <label for="startdate">Start date</label>
+        <input type="date" name="startdate" id="startdate">
+        </p>
+        <p>
+        <label for="starttime">Start time</label>
+        <input type="time" name="starttime" id="starttime">
+        </p>
+        <p style="position: relative;">
+          <input type="submit" value="Upload"><span style="visibility: hidden" id="spin"></span>
+        </p>
+      </form>
+      <a id="download-link" style="visibility: hidden">Download KML</a>
+      <div id="map-canvas">
+      </div>
+    </div>
+    <script type="text/javascript">
+      $(function() {
+          var opts = {
+              lines: 11, // The number of lines to draw
+              length: 6, // The length of each line
+              width: 2, // The line thickness
+              radius: 6, // The radius of the inner circle
+              corners: 1, // Corner roundness (0..1)
+              rotate: 0, // The rotation offset
+              direction: 1, // 1: clockwise, -1: counterclockwise
+              color: '#000', // #rgb or #rrggbb or array of colors
+              speed: 1, // Rounds per second
+              trail: 60, // Afterglow percentage
+              shadow: false, // Whether to render a shadow
+              hwaccel: true, // Whether to use hardware acceleration
+              className: 'spinner', // The CSS class to assign to the spinner
+              zIndex: 2e9, // The z-index (defaults to 2000000000)
+              top: '10%', // Top position relative to parent
+              left: '10%' // Left position relative to parent
+          };
+          var target = document.getElementById('spin');
+          var spinner = new Spinner(opts).spin(target);
+          // bind 'myForm' and provide a simple callback function
+          $('form').ajaxForm({
+              success: function(data) {
+                  $('input[type=submit]').removeAttr('disabled');
+                  $('#spin').css('visibility', 'hidden');
+                  $('#download-link')
+                      .attr('href', '/static/' + data)
+                      .css('visibility', 'visible');
+              },
+              beforeSubmit: function() {
+                  $('input[type=submit]').attr('disabled', 'disabled');
+                  $('#spin').css('visibility', 'visible');
+                  $('#download-link').css('visibility', 'hidden');
+              }
+          });
+      });
+    </script>
+  </body>
+</html>
