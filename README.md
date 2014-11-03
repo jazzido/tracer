@@ -2,10 +2,10 @@
 
 Given a CSV with columns
 
-    - `id` (unique identifier of the vehicle)
-    - `time` (timestamp in seconds)
-    - `lon` (longitude)
-    - `latitude` (latitude)
+  - `id` (unique identifier of the vehicle)
+  - `time` (timestamp in seconds)
+  - `lon` (longitude)
+  - `latitude` (latitude)
 
 Generates a KML containing [`gx:track`](https://developers.google.com/kml/documentation/kmlreference#gxtrack) elements.
 
