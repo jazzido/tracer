@@ -30,3 +30,5 @@ python csv2kml.py input.csv output.kml
 ## License
 
 © 2014 Manuel Aristarán. Distributed under the terms of the MIT License
+
+Developed as part of the requirements for [MIT course 1.204 "Computer Modeling: Human Mobility and Networks"](https://stellar.mit.edu/S/course/1/fa14/1.204/index.html)
