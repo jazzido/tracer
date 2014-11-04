@@ -1,4 +1,4 @@
-import csv, itertools, sys, uuid, os
+import csv, itertools, sys, uuid, os, operator
 from datetime import datetime, timedelta
 
 from flask import Flask, render_template, request
@@ -14,6 +14,8 @@ def format_date(d):
 def create_kml(start_dt, traces):
     mintime = datetime(2100,1,1)
     maxtime = datetime(1901,1,1)
+    bbox_nw = (sys.maxint, sys.maxint)
+    bbox_se = (-sys.maxint, -sys.maxint)
 
     kml = Kml(name="Tracer")
     doc = kml.newdocument()
@@ -34,6 +36,14 @@ def create_kml(start_dt, traces):
         ]
         trk.newgxcoord(places)
 
+        m = min(places, key=operator.itemgetter(0))
+        if m[0] < bbox_nw[0] and not (m[0] == 0.0 or m[1] == 0.0):
+            bbox_nw = m[:2]
+
+        m = max(places, key=operator.itemgetter(0))
+        if m[0] > bbox_se[0] and not (m[0] == 0.0 or m[1] == 0.0):
+            bbox_se = m[:2]
+
         mintime = min([mintime] + times)
         maxtime = max([maxtime] + times)
 
@@ -41,7 +51,8 @@ def create_kml(start_dt, traces):
 
         trk.stylemap.normalstyle.iconstyle.icon.href = 'http://earth.google.com/images/kml-icons/track-directional/track-0.png'
         trk.stylemap.normalstyle.linestyle.color = CATEGORICAL_COLORS[i % len(CATEGORICAL_COLORS)]
-        trk.stylemap.normalstyle.linestyle.width = 6
+        trk.stylemap.normalstyle.linestyle.width = 5
+        trk.stylemap.normalstyle.labelstyle.scale = 1
         trk.stylemap.highlightstyle.iconstyle.icon.href = 'http://earth.google.com/images/kml-icons/track-directional/track-0.png'
         trk.stylemap.highlightstyle.iconstyle.scale = 1.2
         trk.stylemap.highlightstyle.linestyle.color = CATEGORICAL_COLORS[i % len(CATEGORICAL_COLORS)]
@@ -51,6 +62,9 @@ def create_kml(start_dt, traces):
 
     doc.lookat.gxtimespan.begin = format_date(mintime)
     doc.lookat.gxtimespan.end   = format_date(maxtime)
+    doc.lookat.longitude = bbox_nw[0] + (bbox_se[0] - bbox_nw[0]) / 2
+    doc.lookat.latitude = bbox_nw[1] + (bbox_se[1] - bbox_nw[1]) / 2
+    doc.lookat.range = 13000.00
 
     #doc.lookat.longitude, doc.lookat.latitude = list(list(traces)[0][1])[0]
 
@@ -77,14 +91,25 @@ def index():
 
 @app.route('/kml', methods=['POST'])
 def upload_kml():
+
+    st = None
+    try:
+        st = datetime.strptime(request.form['startdate'] + ' ' + request.form['starttime'],
+                               '%Y-%m-%d %H:%M')
+    except:
+        pass
+
     outfname = str(uuid.uuid1()) + '.kml'
     process_csv(request.files['file'],
                 os.path.join(os.path.dirname(os.path.realpath(__file__)),
                              'static',
-                             outfname))
+                             outfname),
+                start_dt=st)
+
     return outfname
 
 
 
 if __name__ == '__main__':
+    #app.run(debug=True, port=6600)
     app.run(debug=True)
