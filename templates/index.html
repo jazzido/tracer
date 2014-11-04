@@ -9,7 +9,6 @@
     <script src="http://malsup.github.com/jquery.form.js"></script>
     <script src="https://fgnass.github.io/spin.js/spin.min.js"></script>
     <script src="https://cdn.rawgit.com/samsonjs/strftime/master/strftime-min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1julwXJMaKGFC6dqdseQFGziEcvKtPj8"></script>
     <!--[if IE]>
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
@@ -36,24 +35,23 @@
       <h1>Tracer</h1>
       <form method="post" action="{{url_for('upload_kml')}}" enctype="multipart/form-data">
         <p>
-        <label for="file">Choose CSV File</label>
-        <input type="file" name="file" id="file" accept=".csv">
+          <label for="file">Choose CSV File</label>
+          <input type="file" name="file" id="file" accept=".csv">
         </p>
         <p>
-        <label for="startdate">Start date</label>
-        <input type="date" name="startdate" id="startdate">
+          <label for="startdate">Start date</label>
+          <input type="date" name="startdate" id="startdate">
         </p>
         <p>
-        <label for="starttime">Start time</label>
-        <input type="time" name="starttime" id="starttime">
+          <label for="starttime">Start time</label>
+          <input type="time" name="starttime" id="starttime">
         </p>
         <p style="position: relative;">
           <input type="submit" value="Upload"><span style="visibility: hidden" id="spin"></span>
         </p>
       </form>
       <a id="download-link" style="visibility: hidden">Download KML</a>
-      <div id="map-canvas">
-      </div>
+      <p><small>Support tool for MIT 1.204 — <a href="https://github.com/jazzido/tracer">Source code on GitHub</a></small></p>
     </div>
     <script type="text/javascript">
       $(function() {
